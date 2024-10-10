@@ -1,24 +1,17 @@
-import { EventType, IEvent, EventInput } from "./base";
+import { EventType, BaseEvent, EventInput } from "./base";
 
-export class EventA implements IEvent {
+export class EventA extends BaseEvent {
   type = EventType.A;
-  userId: string;
-  properties: Record<string, unknown>;
 
   constructor(event: EventInput) {
-    this.userId = event.userId;
-    this.properties = event.properties;
-    const isValid = this.validate();
-    if (!isValid) {
-      throw new Error("Invalid event");
-    }
+    super(event);
   }
 
-  validate(): boolean {
-    if (!this.userId || !this.properties) {
-      return false;
+  validate(): { isValid: boolean; message: string } {
+    if (!this.userId || !this.properties || !this.testingCategory) {
+      return { isValid: false, message: "Invalid event" };
     }
     // can do more validation here
-    return true;
+    return { isValid: true, message: "" };
   }
 }
