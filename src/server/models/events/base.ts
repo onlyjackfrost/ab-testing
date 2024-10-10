@@ -1,3 +1,5 @@
+import { EventError } from "@/server/errors/EventError";
+
 export enum EventType {
   A,
   B,
@@ -32,7 +34,7 @@ export class BaseEvent implements IEvent {
     this.properties = event.properties;
     const { isValid, message } = this.validate();
     if (!isValid) {
-      throw new Error(message || "Invalid event");
+      throw new EventError(message || "Invalid event");
     }
   }
 
