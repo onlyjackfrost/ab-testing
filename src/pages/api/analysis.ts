@@ -16,5 +16,9 @@ export default async function handler(
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   // TODO: Implement POST logic for analysis
+  // get analysis logic based on the analysis type
+  // fetch data based on the analysis type
+  // generate the result
+  // return the result
   res.status(200).json({ message: "POST analysis endpoint" });
 }
