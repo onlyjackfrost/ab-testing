@@ -4,9 +4,17 @@ import { EventFactory } from "@/server/models/factory";
 import { EventError } from "@/server/errors/EventError";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { InMemoryEventQueue } from "@/server/eventQueue";
+import { bootstrapKnex } from "@/server/knex";
+import { EventRepository } from "@/server/repositories/event";
+import { getConfig } from "@/config";
 
+const serverConfig = getConfig();
+const knex = bootstrapKnex({
+  pgUrl: serverConfig.pgUrl,
+  debug: serverConfig.debug,
+});
 const eventQueue = new InMemoryEventQueue();
-
+const eventRepository = new EventRepository(knex);
 /**
  * add the event to queue, then store it into database asynchronously
  */
