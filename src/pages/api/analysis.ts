@@ -42,7 +42,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   }
   // fetch data based on the analysis type
   const events = await analysis.fetchData(req.body.filters as AnalysisFilters);
-  console.log({ events });
   // generate the result
   const result = await analysis.analyze(events);
   // return the result
