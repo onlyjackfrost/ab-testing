@@ -3,6 +3,9 @@ import { EventInput } from "@/server/models/events";
 import { EventFactory } from "@/server/models/factory";
 import { EventError } from "@/server/errors/EventError";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { InMemoryEventQueue } from "@/server/eventQueue";
+
+const eventQueue = new InMemoryEventQueue();
 
 /**
  * add the event to queue, then store it into database asynchronously
@@ -11,10 +14,11 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const event = EventFactory.createEvent(req.body as EventInput);
 
-    // TODO: add event to queue
+    // add event to queue
+    eventQueue.enqueue(event);
 
     // Return success response
-    res.status(201).json({ success: true });
+    return res.status(201).json({ success: true });
   } catch (error) {
     if (error instanceof EventError) {
       return res.status(400).json({ error: error.message });
