@@ -7,6 +7,7 @@ import { InMemoryEventQueue } from "@/server/eventQueue";
 import { bootstrapKnex } from "@/server/knex";
 import { EventRepository } from "@/server/repositories/event";
 import { getConfig } from "@/config";
+import { EventConsumer } from "@/server/backgrounds/consumeEvent";
 
 const serverConfig = getConfig();
 const knex = bootstrapKnex({
@@ -15,10 +16,23 @@ const knex = bootstrapKnex({
 });
 const eventQueue = new InMemoryEventQueue();
 const eventRepository = new EventRepository(knex);
+const eventConsumer = new EventConsumer({
+  eventQueue,
+  eventRepository,
+});
+eventConsumer.start();
+
 /**
  * add the event to queue, then store it into database asynchronously
  */
-const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+  }
+
   try {
     const event = EventFactory.createEvent(req.body as EventInput);
 
@@ -34,12 +48,4 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(500).json({ error: `Unknown error: ${error}` });
     }
   }
-};
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
-  }
-
-  return handlePost(req, res);
 }

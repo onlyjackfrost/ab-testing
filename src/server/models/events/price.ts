@@ -8,7 +8,7 @@ export class EventPrice extends BaseEvent {
   }
 
   validate(): { isValid: boolean; message: string } {
-    if (!this.userId || !this.properties || !this.testingCategory) {
+    if (!this.userId || !this.properties || !this.testId) {
       return { isValid: false, message: "Invalid event" };
     }
     // can do more validation here

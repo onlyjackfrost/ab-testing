@@ -8,14 +8,14 @@ export enum EventType {
 export interface EventInput {
   type: EventType;
   userId: string;
-  testingCategory: string;
+  testId: string;
   properties: Record<string, unknown>;
 }
 
 export interface IEvent {
   type: EventType;
   userId: string;
-  testingCategory: string;
+  testId: string;
   properties: Record<string, unknown>;
 
   validate(): { isValid: boolean; message: string };
@@ -24,13 +24,13 @@ export interface IEvent {
 export class BaseEvent implements IEvent {
   type: EventType;
   userId: string;
-  testingCategory: string;
+  testId: string;
   properties: Record<string, unknown>;
 
   constructor(event: EventInput) {
     this.type = event.type;
     this.userId = event.userId;
-    this.testingCategory = event.testingCategory;
+    this.testId = event.testId;
     this.properties = event.properties;
     const { isValid, message } = this.validate();
     if (!isValid) {

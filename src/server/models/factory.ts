@@ -1,12 +1,20 @@
-import { EventType, EventInput, EventA, EventB, IEvent } from "./events";
+import {
+  EventType,
+  EventInput,
+  EventPrice,
+  EventTitle,
+  IEvent,
+} from "./events";
 
 export class EventFactory {
   static createEvent(event: EventInput): IEvent {
     switch (event.type) {
-      case EventType.A:
-        return new EventA(event);
-      case EventType.B:
-        return new EventB(event);
+      case EventType.PRICE:
+        return new EventPrice(event);
+      case EventType.TITLE:
+        return new EventTitle(event);
+      default:
+        throw new Error(`Unknown event type: ${event.type}`);
     }
   }
 }

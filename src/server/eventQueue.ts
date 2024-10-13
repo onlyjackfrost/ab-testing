@@ -10,14 +10,20 @@ export interface IEventQueue {
  * create a queue to handle the events as an caching layer and as a buffer for the database
  */
 export class InMemoryEventQueue implements IEventQueue {
-  private queue: IEvent[] = [];
+  private queue: IEvent[];
+
+  constructor() {
+    this.queue = [];
+  }
 
   /**
    * add event to queue
    * @param event
    */
   public async enqueue(event: IEvent) {
-    this.queue.push(event);
+    if (event) {
+      this.queue.push(event);
+    }
   }
 
   /**
@@ -25,7 +31,7 @@ export class InMemoryEventQueue implements IEventQueue {
    */
   public async dequeue(): Promise<IEvent[] | undefined> {
     // pop the first 20 events
-    const events = this.queue.splice(0, 100);
+    const events = this.queue.splice(0, 20);
     return events;
   }
 
