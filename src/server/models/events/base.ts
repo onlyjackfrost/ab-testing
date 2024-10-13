@@ -1,8 +1,8 @@
 import { EventError } from "@/server/errors/EventError";
 
 export enum EventType {
-  A,
-  B,
+  PRICE = "price",
+  TITLE = "title",
 }
 
 export interface EventInput {
@@ -39,6 +39,11 @@ export class BaseEvent implements IEvent {
   }
 
   validate(): { isValid: boolean; message: string } {
+    // throw not implemented, should not use this class directly
+    throw new Error("Not implemented");
+  }
+
+  transformToDBValue(): Record<string, unknown> {
     // throw not implemented, should not use this class directly
     throw new Error("Not implemented");
   }

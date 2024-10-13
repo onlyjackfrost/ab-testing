@@ -1,7 +1,8 @@
-import { EventType, EventInput, BaseEvent } from "./base";
+import { EventType, BaseEvent, EventInput } from "./base";
 
-export class EventB extends BaseEvent {
-  type = EventType.B;
+export class EventPrice extends BaseEvent {
+  type = EventType.PRICE;
+
   constructor(event: EventInput) {
     super(event);
   }
