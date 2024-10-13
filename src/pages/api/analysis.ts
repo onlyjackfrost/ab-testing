@@ -1,5 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import bootstrap from "@/bootstrap";
+import { PricingAnalysis } from "@/server/models/analysis/pricing";
+import { AnalysisType } from "@/server/models/analysis/base";
+
+const { eventRepository } = bootstrap;
+
+interface AnalysisFilters {
+  startDate?: string;
+  endDate?: string;
+}
+
+interface AnalysisRequestBody {
+  type: AnalysisType;
+  filters: AnalysisFilters;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,10 +29,22 @@ export default async function handler(
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
-  // TODO: Implement POST logic for analysis
   // get analysis logic based on the analysis type
+  const body = req.body as AnalysisRequestBody;
+  const analysisType = body.type;
+  let analysis;
+  switch (analysisType) {
+    case AnalysisType.PRICING:
+      analysis = new PricingAnalysis({ eventRepository });
+      break;
+    default:
+      throw new Error(`Unsupported analysis type: ${analysisType}`);
+  }
   // fetch data based on the analysis type
+  const events = await analysis.fetchData(req.body.filters as AnalysisFilters);
+  console.log({ events });
   // generate the result
+  const result = await analysis.analyze(events);
   // return the result
-  res.status(200).json({ message: "POST analysis endpoint" });
+  res.status(200).json(result);
 }
