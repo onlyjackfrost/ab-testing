@@ -23,7 +23,7 @@ export class PricingAnalysis {
   public async fetchData(options: PricingAnalysisOptions): Promise<Event[]> {
     const filter: EventFilters = {
       type: EventType.PRICE,
-      createdAt: { gte: options.startDate, lte: options.endDate },
+      eventTime: { gte: options.startDate, lte: options.endDate },
     };
 
     const result = await this.eventRepository.getAllBy(filter);
@@ -33,8 +33,8 @@ export class PricingAnalysis {
   /**
    *  analyze the events and return the result in the following format:
    *  res = {
-   *    test_A: {count: 2, meanPrice: 100, users: [user_1, user_2], revenue: 200}
-   *    test_B: {count: 3, meanPrice: 100, users: [user_3, user_4, user_5], revenue: 300}
+   *    test_A: {count: 2, meanPrice: 100, revenue: 200}
+   *    test_B: {count: 3, meanPrice: 100, revenue: 300}
    *  }
    */
   public async analyze(events: Event[]) {

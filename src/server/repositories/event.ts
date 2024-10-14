@@ -7,6 +7,7 @@ export interface Event {
   type: EventType;
   userId: string;
   testId: string;
+  eventTime: string;
   properties: Record<string, unknown>;
   createdAt?: string;
 }
@@ -15,7 +16,7 @@ export interface EventFilters {
   type?: EventType;
   userId?: string;
   testId?: string;
-  createdAt?: { gte?: string; lte?: string };
+  eventTime?: { gte?: string; lte?: string };
 }
 
 export class EventRepository {
@@ -34,11 +35,11 @@ export class EventRepository {
   public async getAllBy(filters: EventFilters): Promise<Event[]> {
     const stmt = this.knex("event");
     if (filters) {
-      if (filters.createdAt?.gte) {
-        stmt.andWhere("created_at", ">=", filters.createdAt.gte);
+      if (filters.eventTime?.gte) {
+        stmt.andWhere("event_time", ">=", filters.eventTime.gte);
       }
-      if (filters.createdAt?.lte) {
-        stmt.andWhere("created_at", "<=", filters.createdAt.lte);
+      if (filters.eventTime?.lte) {
+        stmt.andWhere("event_time", "<=", filters.eventTime.lte);
       }
       if (filters.testId) {
         stmt.andWhere("test_id", filters.testId);
@@ -76,6 +77,7 @@ export class EventDTO {
       type: iEvent.type,
       userId: iEvent.userId,
       testId: iEvent.testId,
+      eventTime: iEvent.eventTime,
       properties: iEvent.properties,
     };
   }

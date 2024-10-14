@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import bootstrap from "@/bootstrap";
-import { PricingAnalysis } from "@/server/models/analysis/pricing";
+import { PricingAnalysis } from "@/server/models/analysis/implementations/pricing";
 import { AnalysisType } from "@/server/models/analysis/base";
 
 const { eventRepository } = bootstrap;
