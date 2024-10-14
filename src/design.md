@@ -1,13 +1,13 @@
 
 
 ## Requirement
-要求一個可以處理大量事件的系統，並且可以即時分析結果
-每日流量 1 billion events
+A system capable of handling a large volume of events, with real-time result analysis. Daily traffic: 1 billion events.
 
 ## System Analysis
 1. request/sec : 12000
 2. event size: 2kb (around 2000 characters)
-=> 每秒需要處理 24000kb = 24MB 的資料量, 
+
+24MB per sec. 
 1min = 24 * 60 = 1440MB
 10min = 24 * 60 * 10 = 14400MB = 14.4GB
 1 day = 14.4 * 6 * 24 = 2.0736TB
@@ -27,6 +27,9 @@ we should consider the following points:
     - we could leverage some OLAP database like DuckDB to do real-time analysis. The performance is good enough and can be host by our server.
     DuckDB also support import/export data from/to cloud storage and support multiple format(parquet, csv, etc.).
 
+Here is a high level design diagram:
+
+![diagram](../public/abconvert.drawio.png)
 
 ### Buffer between server and database
 Consider to the request volume, we must add a buffer between server and database to reduce the database write pressure.
