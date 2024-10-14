@@ -17,4 +17,5 @@ const eventConsumer = new EventConsumer({
 });
 eventConsumer.start();
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default { eventQueue, eventRepository, eventConsumer, knex };
