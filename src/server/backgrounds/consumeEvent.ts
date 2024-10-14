@@ -29,6 +29,7 @@ export class EventConsumer {
     const events = await this.eventQueue.dequeue();
     if (events) {
       await this.eventRepository.createEvents(EventDTO.toEvents(events));
+      console.log(`Consumed ${events.length} events`);
     }
   }
 }

@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { EventInput } from "@/server/models/events";
-import { EventFactory } from "@/server/models/factory";
+import { EventFactory } from "@/server/models/events";
 import { EventError } from "@/server/errors/EventError";
 import type { NextApiRequest, NextApiResponse } from "next";
 import bootstrap from "@/bootstrap";

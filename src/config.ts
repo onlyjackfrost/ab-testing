@@ -11,7 +11,7 @@ const defaultConfig: ServerConfig = {
 };
 const config = {
   pgUrl: process.env.PG_URL,
-  debug: process.env.NODE_ENV,
+  debug: process.env.DEBUG === "true",
 };
 
 export function getConfig(): ServerConfig {

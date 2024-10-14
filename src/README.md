@@ -18,7 +18,8 @@ Please make sure you have docker installed and port `5432` is available
 ```bash
 # assume you are in project root
 cd ./docker
-docker compose up -d
+docker-compose up -d
+cd ../
 yarn migrate
 ```
 
