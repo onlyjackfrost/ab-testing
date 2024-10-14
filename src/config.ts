@@ -6,7 +6,7 @@ export interface ServerConfig {
 }
 
 const defaultConfig: ServerConfig = {
-  pgUrl: "",
+  pgUrl: "postgres://postgres:postgres@localhost:5432/postgres",
   debug: false,
 };
 const config = {

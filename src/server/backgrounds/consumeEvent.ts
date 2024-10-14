@@ -1,4 +1,4 @@
-import { IEventQueue } from "../eventQueue";
+import { IEventQueue } from "../models/events/queue";
 import { EventDTO, EventRepository } from "../repositories/event";
 
 export class EventConsumer {
@@ -27,7 +27,6 @@ export class EventConsumer {
     }
 
     const events = await this.eventQueue.dequeue();
-    console.log("events", events);
     if (events) {
       await this.eventRepository.createEvents(EventDTO.toEvents(events));
     }

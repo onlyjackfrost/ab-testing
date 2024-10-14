@@ -1,7 +1,7 @@
 # start pg container and redis container
-version: "3.8"
+version: "3"
 services:
-  pg:
+  ab-convert-pg:
     image: postgres:16
     ports:
       - 5432:5432

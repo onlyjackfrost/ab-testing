@@ -1,4 +1,4 @@
-import { IEvent } from "./models/events";
+import { IEvent } from ".";
 
 export interface IEventQueue {
   enqueue(event: IEvent): Promise<void>;
@@ -31,7 +31,7 @@ export class InMemoryEventQueue implements IEventQueue {
    */
   public async dequeue(): Promise<IEvent[] | undefined> {
     // pop the first 20 events
-    const events = this.queue.splice(0, 20);
+    const events = this.queue.splice(0, 300);
     return events;
   }
 

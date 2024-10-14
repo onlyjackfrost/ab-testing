@@ -2,13 +2,15 @@
   "name": "abconvert-interview-project",
   "version": "0.1.0",
   "private": true,
+  "module": "ESNext",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "migrate": "yarn knex migrate:latest",
-    "rollback": "yarn knex migrate:rollback"
+    "rollback": "yarn knex migrate:rollback",
+    "reset": "yarn rollback && yarn migrate"
   },
   "dependencies": {
     "@types/lodash.add": "^3.7.9",
@@ -23,6 +25,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "axios": "^1.7.7",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
     "postcss": "^8",

@@ -4,7 +4,7 @@ import {
   EventRepository,
 } from "@/server/repositories/event";
 import { EventType } from "@/server/models/events";
-import { AnalysisType } from "./base";
+import { AnalysisType } from "../base";
 import { uniq } from "lodash";
 
 export interface PricingAnalysisOptions {
@@ -44,16 +44,14 @@ export class PricingAnalysis {
       const meanPrice =
         testEvents.reduce((acc, e) => acc + (e.properties.price as number), 0) /
         testEvents.length;
-      const users = uniq(testEvents.map((e) => e.userId));
       const revenue = testEvents.reduce(
         (acc, e) => acc + (e.properties.price as number),
         0
       );
       return {
         testId,
-        count: testEvents.length,
+        userCount: testEvents.length,
         meanPrice,
-        users,
         revenue,
       };
     });

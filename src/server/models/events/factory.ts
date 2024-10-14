@@ -4,7 +4,7 @@ import {
   EventPrice,
   EventTitle,
   IEvent,
-} from "./events";
+} from "@/server/models/events";
 
 export class EventFactory {
   static createEvent(event: EventInput): IEvent {

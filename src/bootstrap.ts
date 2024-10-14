@@ -1,4 +1,4 @@
-import { InMemoryEventQueue } from "@/server/eventQueue";
+import { InMemoryEventQueue } from "@/server/models/events";
 import { bootstrapKnex } from "@/server/knex";
 import { EventRepository } from "@/server/repositories/event";
 import { getConfig } from "@/config";
