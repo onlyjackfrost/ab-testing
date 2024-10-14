@@ -1,0 +1,16 @@
+# start pg container and redis container
+version: "3"
+volumes:
+  abconvert:
+
+services:
+  ab-convert-pg:
+    image: postgres:16
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - abconvert:/var/lib/postgresql/data

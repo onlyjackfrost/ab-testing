@@ -1,16 +1,32 @@
 # start pg container and redis container
 version: "3"
 volumes:
-  abconvert:
+  abconvert-prod:
 
 services:
-  ab-convert-pg:
+  abconvert-pg:
     image: postgres:16
     ports:
       - 5432:5432
+    networks:
+      - abconvert
+
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - abconvert:/var/lib/postgresql/data
+      - abconvert-prod:/var/lib/postgresql/data
+  abconvert:
+    image: abconvert-v1
+    ports:
+      - 3000:3000
+    environment:
+      PG_URL: postgresql://postgres:postgres@abconvert-pg:5432/postgres
+      NODE_ENV: production
+    networks:
+      - abconvert
+
+networks:
+  abconvert:
+    driver: bridge
