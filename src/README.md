@@ -64,6 +64,44 @@ docker compose down
 yarn reset
 ```
 
+## Start with docker-compose
+To start the project with docker-compose, you need to build the docker image first
+```sh
+# build your image locally
+docker buildx build --platform linux/arm64 --tag abconvert-v1 --file ./Dockerfile  --load .
+```
+
+After the image is built, you can start the project with docker-compose
+```sh
+cd ./docker
+docker-compose up -d
+```
+
+If the server running successfully, you should see something like this
+```sh
+abconvert-pg-1  |
+abconvert-pg-1  | PostgreSQL Database directory appears to contain a database; Skipping initialization
+abconvert-pg-1  |
+abconvert-pg-1  | 2024-10-14 16:56:09.137 UTC [1] LOG:  starting PostgreSQL 16.4 (Debian 16.4-1.pgdg120+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+abconvert-pg-1  | 2024-10-14 16:56:09.138 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+abconvert-pg-1  | 2024-10-14 16:56:09.138 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+abconvert-pg-1  | 2024-10-14 16:56:09.141 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+abconvert-pg-1  | 2024-10-14 16:56:09.145 UTC [29] LOG:  database system was shut down at 2024-10-14 16:56:05 UTC
+abconvert-pg-1  | 2024-10-14 16:56:09.148 UTC [1] LOG:  database system is ready to accept connections
+abconvert-1     | yarn run v1.22.19
+abconvert-1     | $ yarn knex migrate:latest
+abconvert-1     | $ /app/node_modules/.bin/knex migrate:latest
+abconvert-1     | Using Postgres
+abconvert-1     | Already up to date
+abconvert-1     | Done in 0.49s.
+abconvert-1     |   ▲ Next.js 14.2.13
+abconvert-1     |   - Local:        http://localhost:3000
+abconvert-1     |   - Network:      http://0.0.0.0:3000
+abconvert-1     |
+abconvert-1     |  ✓ Starting...
+abconvert-1     |  ✓ Ready in 110ms
+```
+
 ## Current version of the project
 In this project, I create a simple AB testing platform which can accept a bunch of events without blocking users and analyze the result of the AB test.
 
