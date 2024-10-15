@@ -18,12 +18,14 @@ services:
     volumes:
       - abconvert-prod:/var/lib/postgresql/data
   abconvert:
-    image: abconvert-v1
+    image: ghcr.io/onlyjackfrost/ab-testing:latest
     ports:
       - 3000:3000
     environment:
       PG_URL: postgresql://postgres:postgres@abconvert-pg:5432/postgres
       NODE_ENV: production
+    depends_on:
+      - abconvert-pg
     networks:
       - abconvert
 
