@@ -41,13 +41,16 @@ export class PricingAnalysis {
     const testIds = uniq(events.map((e) => e.testId));
     return testIds.map((testId) => {
       const testEvents = events.filter((e) => e.testId === testId);
-      const meanPrice =
+
+      // calculate mean price, fixed to 2 decimal
+      const meanPrice = (
         testEvents.reduce((acc, e) => acc + (e.properties.price as number), 0) /
-        testEvents.length;
-      const revenue = testEvents.reduce(
-        (acc, e) => acc + (e.properties.price as number),
-        0
-      );
+        testEvents.length
+      ).toFixed(2);
+      // calculate revenue, fixed to 2 decimal
+      const revenue = testEvents
+        .reduce((acc, e) => acc + (e.properties.price as number), 0)
+        .toFixed(2);
       return {
         testId,
         userCount: testEvents.length,
