@@ -1,4 +1,4 @@
-## How to run on local
+## How to run on local and develop
 
 ### Prerequisites
 - Node.js 18+
@@ -42,16 +42,12 @@ yarn dev
 ### Start sending events and monitoring
 After the server is running, you can start sending events to the server.
 
-1. Please go to the `http://localhost:3000/monitor` to see the real-time analysis result.
-Fill in the start date, end date then click `Start monitoring`, You should see the analysis result is empty for now.
+I built a simple page for you to play around.
 
-2. Start another terminal to run the following command to send events to the server
-```bash
-node ./scripts/sendEvents.ts
-```
+![http://localhost:3000/monitor](../public/monitor.png)
 
-This script will send 10000 events to the server with concurrency 100.
-3. Now you can see the analysis result in the monitor page.
+You can change the event number to send events concurrently.
+After clicking `Start monitoring`, you should see the analysis result in the monitor page in real-time.
 
 ## Clean up
 
