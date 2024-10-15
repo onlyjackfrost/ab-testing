@@ -29,7 +29,7 @@ async function sendRandomEvent(userCount, setMessage) {
     try {
       await Promise.all(
         Array.from({ length: concurrent }).map(() =>
-          axios.post(`http://localhost:3000/api/event`, {
+          axios.post(`/api/event`, {
             type: 'price',
             userId: user,
             testId: test.name,
