@@ -20,23 +20,27 @@ const tests = [
   },
 ];
 
-async function sendRandomEvent(userCount, setMessage) {
+async function sendRandomEvent(eventCount, setMessage) {
   const start = Date.now();
   const concurrent = 100;
-  for (let i = 0; i < userCount; i += concurrent) {
-    const user = `user_${i}`;
-    const test = tests[Math.floor(Math.random() * tests.length)];
+  const recordEvents = [0,0,0,0]
+  let userId = 0
+  for (let i = 0; i < eventCount; i += concurrent) {
     try {
       await Promise.all(
-        Array.from({ length: concurrent }).map(() =>
-          axios.post(`/api/event`, {
+        Array.from({ length: concurrent }).map(() =>{
+          userId += 1
+          const testIndex = Math.floor(Math.random() * tests.length);
+          const test = tests[testIndex];
+          recordEvents[testIndex] += 1;
+          return axios.post(`/api/event`, {
             type: 'price',
-            userId: user,
+            userId: `user_${userId}`,
             testId: test.name,
             properties: {
-              price: test.prise,
+              price: test.prise + Math.random() * 10,
             },
-          })
+          })}
         )
       );
     } catch (error) {
@@ -44,7 +48,8 @@ async function sendRandomEvent(userCount, setMessage) {
     }
   }
   const end = Date.now();
-  const message = `Time taken: ${end - start} ms, ${(userCount / (end - start)) * 1000} users/s`;
+  const message = `Time taken: ${end - start} ms, ${(eventCount / (end - start)) * 1000} events/s \n
+  ${tests.map((test, index) => `${test.name}: ${recordEvents[index]}`).join('\n')}`;
   console.log(message);
   setMessage(message);
 }
