@@ -119,7 +119,7 @@ export default function EventPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/analysis', {
+      const response = await fetch('api/analysis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
