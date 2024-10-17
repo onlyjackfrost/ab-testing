@@ -1,87 +1,190 @@
-import { MoisturizationIcon, PreventBreakageIcon, StrengthenIcon } from '@/component/feature-icon';
-import React from 'react';
+import { useEffect, useState, useRef } from "react";
 
-export default function Home() {
+export default function ProductPage() {
+  const [productData, setProductData] = useState(null);
+  const fetched = useRef(false);
+
+  useEffect(() => {
+    async function fetchProductData() {
+      const res = await fetch("/api/product");
+      const data = await res.json();
+      setProductData(data.content);
+    }
+    if (!fetched.current) {
+      fetchProductData();
+      fetched.current = true;
+    }
+  }, []);
+
+  if (!productData) return <p>Loading...</p>;
+
   return (
-    <div className='flex justify-center h-svh p-10'>
-      <div className="max-w-3xl mx-auto bg-yellow-50 p-6 rounded-lg shadow-md">
-        <div className="flex items-center text-yellow-500 text-lg">
-          <span className="mr-2">★★★★★</span>
-          <span className="font-bold">25,000+ Happy Customers</span>
-        </div>
+    <div style={styles.container}>
+      {/* Customer Review Section */}
+      <p style={styles.review}>⭐️⭐️⭐️⭐️⭐️ 25,000+ Happy Customers</p>
 
-        <h1 id='title' className="text-4xl font-bold my-4 text-gray-800">Chebe Hair Butter</h1>
-        <div id='price' className="text-2xl text-gray-800 mb-4">$20</div>
+      {/* Product Title */}
+      <h1 id="title" style={styles.title}>{productData.title}</h1>
 
-        <ul id='description' className="list-disc list-inside mb-8 space-y-3 text-black">
-          <li>
-            Perfect for hair <strong>moisturization, strength, growth</strong>
-          </li>
-          <li>
-            Prevents <strong>split ends, breakage, dry hair</strong>
-          </li>
-          <li>
-            <strong>Zero-water formula</strong> means your hair can absorb full benefits of organic, natural ingredients
-          </li>
-          <li>
-            <strong>100% natural chebe powder</strong> extract from Africa
-          </li>
-          <li>
-            Used by women from Africa for <strong>hair length and retention for centuries</strong>
-          </li>
-        </ul>
+      {/* Product Price */}
+      <p id="price" style={styles.price}>{productData.price}</p>
 
-        <div className="grid grid-cols-3 gap-6 mb-8 text-black">
-          <div id='feature-1' className="text-center">
-
-            {/* <img src="/moisturization-icon.png" alt="Powerful Moisturization" className="w-12 mx-auto mb-2" /> */}
-            <div className='flex flex-col items-center'>
-              <MoisturizationIcon />
-              <p className="text-sm">Powerful Moisturization</p>
-            </div>
-          </div>
-          <div id='feature-2' className="text-center">
-            <div className='flex flex-col items-center'>
-              {/* <img src="/breakage-icon.png" alt="Prevent breakage and split ends" className="w-12 mx-auto mb-2" /> */}
-              <PreventBreakageIcon />
-              <p className="text-sm">Prevent breakage and split ends</p>
-            </div>
-          </div>
-          <div id='feature-2' className="text-center">
-            <div className='flex flex-col items-center'>
-              {/* <img src="/strengthen-icon.png" alt="Strengthen & lengthen hair" className="w-12 mx-auto mb-2" /> */}
-              <StrengthenIcon />
-              <p className="text-sm">Strengthen & lengthen hair</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-yellow-100 p-6 rounded-lg">
-          <div className="flex justify-center mb-6">
-            <button className="px-6 py-2 rounded-full bg-white font-bold text-gray-800 mr-4">One Time Purchase</button>
-            <button className="px-6 py-2 rounded-full bg-gray-200 font-bold text-gray-600">Subscribe & Save 20%</button>
-          </div>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="text-center bg-white p-4 rounded-lg shadow-sm">
-              <p className="font-bold text-lg text-black">8 oz</p>
-              <p className="text-xl text-gray-800 mb-2">$20</p>
-              <p className="text-sm text-gray-500">$2.50 per oz</p>
-              <span className="inline-block mt-2 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-lg">Save 30%</span>
-            </div>
-            <div className="text-center bg-white p-4 rounded-lg shadow-sm">
-              <p className="font-bold text-lg text-black">4 oz</p>
-              <p className="text-xl text-gray-800 mb-2">$16</p>
-              <p className="text-sm text-gray-500">$4.00 per oz</p>
-            </div>
-          </div>
-        </div>
-        <footer className="mt-12 text-center">
-          <p className="text-gray-500 text-sm">
-            Powered by ABConvert
-          </p>
-        </footer>
+      {/* Product Description */}
+      <div id="description" style={styles.description}>
+        {productData.description.map((line, index) => (
+          <p key={index} style={styles.descriptionLine}>• {line}</p>
+        ))}
       </div>
 
+      {/* Product Features */}
+      <div id="features" style={styles.features}>
+        {productData.features.map((feature, index) => (
+          <div key={index} style={styles.featureBox}>
+            <img
+              src={`/feature-icon-${index + 1}.png`} 
+              alt={`Feature ${index + 1}`}
+              style={styles.featureIcon}
+            />
+            <p style={styles.featureText}>{feature}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Purchase Options */}
+      <div id="plans" style={styles.plans}>
+        <div style={styles.planButtons}>
+          <button style={styles.planButton}>One Time Purchase</button>
+          <button style={styles.planButton}>Subscribe & Save 20%</button>
+        </div>
+
+        <div style={styles.planOptions}>
+          {productData.plans.map((plan, index) => (
+            <div key={index} style={styles.planBox}>
+              <h3 style={styles.planSize}>{plan.size}</h3>
+              <p style={styles.planPrice}>{plan.price}</p>
+              <p style={styles.planUnit}>{plan.perUnit}</p>
+              <p style={styles.discount}>{plan.discount}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={styles.planButtons}>
+          <button style={styles.planButton} onClick={() => {
+            fetch("/api/reset");
+          }}>Reset cookie</button>
+        </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    backgroundColor: "#FFF5CC",
+    padding: "40px",
+    fontFamily: "Arial, sans-serif",
+    maxWidth: "800px",
+    margin: "0 auto",
+  },
+  review: {
+    color: "#FFC107",
+    fontWeight: "bold",
+    marginBottom: "10px",
+    fontSize: "18px",
+  },
+  title: {
+    fontSize: "42px",
+    fontWeight: "bold",
+    marginBottom: "5px",
+    color: "#000", // Black text
+  },
+  price: {
+    fontSize: "28px",
+    fontWeight: "bold",
+    color: "#000", // Black text
+    marginBottom: "20px",
+  },
+  description: {
+    backgroundColor: "#FFF",
+    padding: "20px",
+    borderRadius: "8px",
+    marginBottom: "30px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  },
+  descriptionLine: {
+    marginBottom: "8px",
+    fontSize: "18px",
+    color: "#000", // Black text
+  },
+  features: {
+    display: "flex",
+    justifyContent: "space-around",
+    marginBottom: "30px",
+  },
+  featureBox: {
+    textAlign: "center",
+    padding: "10px",
+  },
+  featureIcon: {
+    width: "40px",
+    marginBottom: "8px",
+    textAlign: "center",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  featureText: {
+    fontSize: "16px",
+    fontWeight: "bold",
+    color: "#000", // Black text
+  },
+  plans: {
+    backgroundColor: "#FFE680",
+    padding: "30px",
+    borderRadius: "8px",
+    
+  },
+  planButtons: {
+    display: "flex",
+    justifyContent: "center", // Center buttons
+    gap: "10px", // Spacing between buttons
+    marginBottom: "20px",
+  },
+  planButton: {
+    backgroundColor: "#FFF",
+    border: "none",
+    padding: "10px 20px",
+    cursor: "pointer",
+    borderRadius: "5px",
+    fontWeight: "bold",
+    fontSize: "16px",
+    minWidth: "200px", // Ensure consistent button width
+    color: "#000", // Black text for buttons
+  },
+  planOptions: {
+    display: "flex",
+    justifyContent: "space-around",
+  },
+  planBox: {
+    backgroundColor: "#FFF",
+    padding: "20px",
+    borderRadius: "8px",
+    textAlign: "center",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  },
+  planSize: {
+    fontSize: "18px",
+    color: "#000", // Black text
+  },
+  planPrice: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    color: "#000", // Black text
+  },
+  planUnit: {
+    fontSize: "14px",
+    color: "#808080", // Gray text for per unit price
+  },
+  discount: {
+    color: "#FFA500", // Black text for discount
+    fontWeight: "bold",
+  },
+};
