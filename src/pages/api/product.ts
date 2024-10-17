@@ -1,4 +1,5 @@
 import { products } from "@/server/products";
+import { NextApiRequest, NextApiResponse } from "next";
 
 let assignCount = 0;
 
@@ -28,7 +29,7 @@ const getAssignedKey = (productLength: number) => {
 // If we don't have to distribute the test strictly even, we can use a simple random assign method.
 // The assign rules should be decided based on the business goals.
 // Here I choose the simplest way, use running integer to assign the product to have a better demo effect.
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   let productHeader = req.cookies["ab-product"];
   // leave the console.log for demo purpose
   console.log(`productHeader: ${productHeader}`);

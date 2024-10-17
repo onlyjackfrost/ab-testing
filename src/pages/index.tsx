@@ -1,13 +1,39 @@
 import { useEffect, useState, useRef } from "react";
+import Image from 'next/image';
+
+type ProductData = {
+  title: string;
+  price: string;
+  description: string[];
+  features: string[];
+  plans: {
+    size: string;
+    price: string;
+    perUnit: string;
+    discount: string;
+  }[];
+};
 
 export default function ProductPage() {
-  const [productData, setProductData] = useState(null);
+  const [productData, setProductData] = useState<ProductData | null>(null);
   const fetched = useRef(false);
 
   useEffect(() => {
     async function fetchProductData() {
       const res = await fetch("/api/product");
-      const data = await res.json();
+      const data : { content: {
+        title: string;
+        price: string;
+        description: string[];
+        features: string[];
+        plans: {
+          size: string;
+          price: string;
+          perUnit: string;
+          discount: string;
+        }[];
+      } } = await res.json();
+      
       setProductData(data.content);
     }
     if (!fetched.current) {
@@ -24,10 +50,10 @@ export default function ProductPage() {
       <p style={styles.review}>⭐️⭐️⭐️⭐️⭐️ 25,000+ Happy Customers</p>
 
       {/* Product Title */}
-      <h1 id="title" style={styles.title}>{productData.title}</h1>
+      <h1 id="title" style={styles.title}>{productData?.title}</h1>
 
       {/* Product Price */}
-      <p id="price" style={styles.price}>{productData.price}</p>
+      <p id="price" style={styles.price}>{productData?.price}</p>
 
       {/* Product Description */}
       <div id="description" style={styles.description}>
@@ -39,11 +65,13 @@ export default function ProductPage() {
       {/* Product Features */}
       <div id="features" style={styles.features}>
         {productData.features.map((feature, index) => (
-          <div key={index} style={styles.featureBox}>
-            <img
+          <div key={index} style={{ ...styles.featureBox, textAlign: "center" }}>
+            <Image
               src={`/feature-icon-${index + 1}.png`} 
               alt={`Feature ${index + 1}`}
-              style={styles.featureIcon}
+              style={{ ...styles.featureIcon, textAlign: "center" }}
+              width={40}
+              height={40}
             />
             <p style={styles.featureText}>{feature}</p>
           </div>
@@ -59,7 +87,7 @@ export default function ProductPage() {
 
         <div style={styles.planOptions}>
           {productData.plans.map((plan, index) => (
-            <div key={index} style={styles.planBox}>
+            <div key={index} style={{ ...styles.planBox, textAlign: "center" }}>
               <h3 style={styles.planSize}>{plan.size}</h3>
               <p style={styles.planPrice}>{plan.price}</p>
               <p style={styles.planUnit}>{plan.perUnit}</p>
