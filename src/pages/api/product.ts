@@ -16,8 +16,9 @@ const getAssignedKey = (productLength: number) => {
 // but for demo purpose, I just use the cookie to memorize the test name.
 
 // I design this API router only for demo.
-// In reality, we might have to know which page content should be rendered.
-// We might have to record an identifier to identify which test content should we used.
+// In reality, we might have to make this API general
+// and we should know which page content should be rendered from the request(eg. query path, query params, header...)
+// then use this identifier to find the content.
 export default function handler(req, res) {
   let productHeader = req.cookies["ab-product"];
   console.log(`productHeader: ${productHeader}`);
