@@ -88,6 +88,51 @@ Pros:
 Cons:
 - the performance might not as good as using duckdb
 
+### AB Testing
+There are two topic we can discuss about AB testing:
+1. **how to assign the user to different test and get consistent result**
+
+1.1 How to assign the user to different test
+We can use different strategies to assign the user to different test and it's based on the business goals.
+For example, 
+1. we can use the hash of the user id.
+2. we can use the round-robin method.
+3. we can assign the user by the time they login.
+4. we can use the random method.
+
+The assign strategy should be extendable so we should design the system in a way that we can add new assign strategy in the future without modifying the existing logic.
+
+
+1.2 How to get consistent result
+We can use the cookie or session to memorize the test name.
+There are trade-off between cookie and session:
+- cookie
+    - control by the browser, the user can clear the cookie.
+    - wont increase the server's workload.
+    - store in the browser, won't increase the server's storage cost.
+    - easy to implement, no need to maintain the session server.
+    - cookie have a size limit 4kb
+- session
+    - control by the server, the server can clear the session/delete the cookie.
+    - will increase the server's workload.
+    - will increase the server's storage cost.
+    - Can implement complex logic and won't have size limit
+    - Should persist the session data in the database.
+    - scale up could be hard for a distributed server.
+IMO, the testing info is not sensitive and the info won't be large. We can use the cookie to implement this feature.
+    
+2. **how to create & store a test**
+If the page content user saw should be delivered by us. We should reduce the risk of single point failure.
+The architecture might be like this:
+
+![diagram](../public/abconvert_with_product.png)
+
+The benefit of this architecture is that if the event's database is down, the A/B testing service still can work. The incident will have a smaller effect.
+But we will not have the strong consistency between the product and the event's database. and we'll have to use a ETL tool to sync the product's info into the event's database. It might cause some latency and extra cost.
+
+If we like to reduce the latency of getting page content or reduce the workload of the product's database. We could add a cache layer(like Redis) to cache the page content, we could use a cache aside pattern to achieve this.
+
+
 ---
 ## Others
 There are another future benefit of using duckdb.
