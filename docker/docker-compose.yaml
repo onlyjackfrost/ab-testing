@@ -19,6 +19,7 @@ services:
       - abconvert-prod:/var/lib/postgresql/data
   abconvert:
     image: ghcr.io/onlyjackfrost/ab-testing:latest
+    pull_policy: always
     ports:
       - 3000:3000
     environment:

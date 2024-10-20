@@ -5,15 +5,8 @@
 exports.up = function (knex) {
   return knex.schema.createTable('test', (table) => {
     table.increments('id').comment('ID');
-    table
-      .string('name')
-      .comment('test name');
-    table.string('type').comment('test type: eg: price, title...');
+    table.float('price').comment('the price of the test');
     table.timestamps(true, true);
-
-    // indexing
-    table.index('user_id');
-    table.index('name');
   });
 };
 

@@ -2,17 +2,15 @@ import {
   EventType,
   EventInput,
   EventPrice,
-  EventTitle,
   IEvent,
 } from "@/server/models/events";
 
 export class EventFactory {
   static createEvent(event: EventInput): IEvent {
+    console.log("event:", event);
     switch (event.type) {
-      case EventType.PRICE:
+      case EventType.PURCHASE:
         return new EventPrice(event);
-      case EventType.TITLE:
-        return new EventTitle(event);
       default:
         throw new Error(`Unknown event type: ${event.type}`);
     }

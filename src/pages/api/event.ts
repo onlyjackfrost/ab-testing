@@ -16,7 +16,13 @@ export default async function handler(
   }
   const { eventQueue } = bootstrap;
   try {
-    const event = EventFactory.createEvent(req.body as EventInput);
+    // get testId from cookie
+    const testId = req.cookies["ab-test"];
+    const eventBody = {
+      ...req.body,
+      testId,
+    } as EventInput;
+    const event = EventFactory.createEvent(eventBody);
 
     // add event to queue
     eventQueue.enqueue(event);
@@ -24,6 +30,7 @@ export default async function handler(
     // Return success response
     return res.status(201).json({ success: true });
   } catch (error) {
+    console.error("error:", error);
     if (error instanceof EventError) {
       return res.status(400).json({ error: error.message });
     } else {

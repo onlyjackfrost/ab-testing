@@ -5,18 +5,14 @@ import { EventType, IEvent } from "../models/events";
 // Event model definition
 export interface Event {
   type: EventType;
-  userId: string;
   testId: string;
-  eventTime: string;
   properties: Record<string, unknown>;
   createdAt?: string;
 }
 
 export interface EventFilters {
   type?: EventType;
-  userId?: string;
   testId?: string;
-  eventTime?: { gte?: string; lte?: string };
 }
 
 export class EventRepository {
@@ -35,17 +31,8 @@ export class EventRepository {
   public async getAllBy(filters: EventFilters): Promise<Event[]> {
     const stmt = this.knex("event");
     if (filters) {
-      if (filters.eventTime?.gte) {
-        stmt.andWhere("event_time", ">=", filters.eventTime.gte);
-      }
-      if (filters.eventTime?.lte) {
-        stmt.andWhere("event_time", "<=", filters.eventTime.lte);
-      }
       if (filters.testId) {
         stmt.andWhere("test_id", filters.testId);
-      }
-      if (filters.userId) {
-        stmt.andWhere("user_id", filters.userId);
       }
       if (filters.type) {
         stmt.andWhere("type", filters.type);
@@ -75,9 +62,7 @@ export class EventDTO {
   static toEvent(iEvent: IEvent): Event {
     return {
       type: iEvent.type,
-      userId: iEvent.userId,
       testId: iEvent.testId,
-      eventTime: iEvent.eventTime,
       properties: iEvent.properties,
     };
   }

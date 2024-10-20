@@ -16,9 +16,7 @@ exports.up = function (knex) {
     table.timestamps(true, true);
 
     // indexing
-    table.index('user_id');
     table.index('test_id');
-    table.index('event_time');
   });
 };
 

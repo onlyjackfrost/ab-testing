@@ -41,7 +41,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
       throw new Error(`Unsupported analysis type: ${analysisType}`);
   }
   // fetch data based on the analysis type
-  const events = await analysis.fetchData(req.body.filters as AnalysisFilters);
+  const events = await analysis.fetchData();
   // generate the result
   const result = await analysis.analyze(events);
   // return the result

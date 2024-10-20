@@ -1,5 +1,5 @@
-import { products } from "@/server/products";
 import { NextApiRequest, NextApiResponse } from "next";
+import bootstrap from "@/bootstrap";
 
 let assignCount = 0;
 
@@ -29,31 +29,34 @@ const getAssignedKey = (productLength: number) => {
 // If we don't have to distribute the test strictly even, we can use a simple random assign method.
 // The assign rules should be decided based on the business goals.
 // Here I choose the simplest way, use running integer to assign the product to have a better demo effect.
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  let productHeader = req.cookies["ab-product"];
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const headerKey = "ab-test";
+  let productHeader = req.cookies[headerKey];
   // leave the console.log for demo purpose
-  console.log(`productHeader: ${productHeader}`);
+  console.log(`${headerKey}: ${productHeader}`);
 
   // if no product header or not in the product list, assign a new product
-  const testNames = products.map((product) => product.getTestName());
-  if (!productHeader || !testNames.includes(productHeader)) {
-    productHeader = products[getAssignedKey(testNames.length)].getTestName();
+  const tests = await bootstrap.testRepository.getAll();
+  const testIds = tests.map((test) => test.id.toString());
+  if (!productHeader || !testIds.includes(productHeader)) {
+    productHeader = testIds[getAssignedKey(testIds.length)];
 
-    console.log(`assign new product: ${productHeader}`);
+    console.log(`assign new test: ${productHeader}`);
 
     // set the new cookie, and let it expire in 14 days
     res.setHeader(
       "Set-Cookie",
-      `ab-product=${productHeader}; Path=/; Max-Age=${
-        14 * 24 * 60 * 60
+      `${headerKey}=${productHeader}; Path=/; Max-Age=${
+        1 * 24 * 60 * 60
       }; HttpOnly`
     );
   }
-  const product = products.find(
-    (product) => product.getTestName() === productHeader
-  );
+  const test = tests.find(({ id }) => id.toString() === productHeader);
   // return the corresponding product information
   res.status(200).json({
-    content: product?.getPageContent(),
+    content: { price: test!.price },
   });
 }
