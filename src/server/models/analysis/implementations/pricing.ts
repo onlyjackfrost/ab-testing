@@ -65,16 +65,20 @@ export class PricingAnalysis {
       const testEvents = events.filter((e) => e.testId === testId);
       const purchaseStyle: Record<string, number> = uniq(
         testEvents.map((e) => <string>e.properties.purchaseType)
-      ).reduce((acc: Record<string, number>, purchaseType) => {
-        acc[purchaseType] = 0;
-        return acc;
-      }, {});
+      )
+        .filter((purchaseType) => purchaseType !== undefined)
+        .reduce((acc: Record<string, number>, purchaseType) => {
+          acc[purchaseType] = 0;
+          return acc;
+        }, {});
       let revenue = 0;
       let purchaseCount = 0;
       testEvents.forEach((e) => {
         purchaseCount++;
         revenue += e.properties.price as number;
-        purchaseStyle[<string>e.properties.purchaseType]++;
+        if (e.properties.purchaseType) {
+          purchaseStyle[<string>e.properties.purchaseType]++;
+        }
       });
 
       totalPurchaseCount += purchaseCount;

@@ -10,9 +10,11 @@
     "lint": "next lint",
     "migrate": "yarn knex migrate:latest",
     "rollback": "yarn knex migrate:rollback",
-    "reset": "yarn rollback && yarn migrate"
+    "reset": "yarn rollback && yarn migrate",
+    "test": "jest src/server/models"
   },
   "dependencies": {
+    "@types/jest": "^29.5.13",
     "@types/lodash.add": "^3.7.9",
     "knex": "^3.1.0",
     "lodash": "^4.17.21",
@@ -28,8 +30,10 @@
     "axios": "^1.7.7",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
+    "jest": "^29.7.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "ts-jest": "^29.2.5",
     "typescript": "^5"
   }
 }
