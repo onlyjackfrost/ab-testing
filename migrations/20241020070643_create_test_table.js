@@ -3,22 +3,17 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  return knex.schema.createTable('event', (table) => {
+  return knex.schema.createTable('test', (table) => {
     table.increments('id').comment('ID');
     table
-      .string('type')
-      .comment('event type');
-    table.string('test_id').comment('the test id this event is related to');
-    table
-      .jsonb('properties')
-      .nullable()
-      .comment('the event properties');
+      .string('name')
+      .comment('test name');
+    table.string('type').comment('test type: eg: price, title...');
     table.timestamps(true, true);
 
     // indexing
     table.index('user_id');
-    table.index('test_id');
-    table.index('event_time');
+    table.index('name');
   });
 };
 
