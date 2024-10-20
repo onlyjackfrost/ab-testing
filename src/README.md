@@ -39,15 +39,25 @@ Batch 1 run: 1 migrations
 yarn dev
 ```
 
-### Start sending events and monitoring
-After the server is running, you can start sending events to the server.
+### Start create test
+After the server is running, you can create Price A/B test.
 
-I built a simple page for you to play around.
+![http://localhost:3000](../public/test-page.png)
 
-![http://localhost:3000/monitor](../public/monitor.png)
+You can fill in the `test price` then click `Submit Test Prices` button to create a test.
+After submit, you should see the test in the `Existing tests` table:
 
-You can change the event number to send events concurrently.
-After clicking `Start monitoring`, you should see the analysis result in the monitor page in real-time.
+### Use the test
+After creating your A/B test, you can go to the Product Page to see how your test works.
+When you click the `Reset cookie & reload` button, you should see different test price been applied to the product.
+Please choose a plan(8 oz / 4 oz) the click one of the purchase button to purchase.
+When clicking the purchase button, server will receive a purchase event.
+![http://localhost:3000/product](../public/product-page.png)
+
+### Monitor the test
+After clicking the purchase button, you can go to the `Analysis Page` to monitor the test result.
+
+![http://localhost:3000/analysis](../public/analysis-page.png)
 
 ## Clean up
 

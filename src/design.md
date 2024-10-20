@@ -45,12 +45,19 @@ I'll choose PostgreSQL for this case because it's the most popular and I familia
 To avoid the performance issue when doing analysis query, we should separate the database to read and write. To speed up the query
 To reduce the cost, and keep/improve the performance for analysis, we can pre-aggregate the data in the database. then export the raw data into Cloud storage after a period of time.
 
+### Export Job & Analysis
+The export job will export data from Postgres for a specific time range and save it as a Parquet file to cloud storage. You can consider deleting the data from Postgres after a certain period to reduce its load.
+
+When analysis tasks are required, the data can be imported from cloud storage into DuckDB for analysis.
+
+If you prefer not to maintain the DuckDB service yourself, you can consider using the MotherDuck service.
+
 ### Analysis
 ---
 There are two scenario for analysis job:
 1. analysis the data stored in the cloud storage(for analysis historical data)
 2. directly analysis in the database(for on-time data)
-
+---
 1. **analysis the data stored in the cloud storage**
 For analysis historical data, we can use the OLAP database like duckdb to do analysis. 
 The benefit of using duckdb:
@@ -77,8 +84,9 @@ There are two way to host the duckdb:
 
 
 2. **directly analysis in the database**
-For on-time data, we can directly analysis in the database(read only).
+For on-time data, we can directly analysis in the read-only database.
 Since we've done the database read/write separation, we can analysis the data in the database without affecting the performance. and with pre-aggregate data, the performance should be good enough.
+If the performance of the analysis task remains unsatisfactory, we can consider using an OLAP database for analysis. OLAP stores data in a columnar format, which reduces the amount of data fetched during the analysis of large datasets, resulting in better performance. This approach can also alleviate the pressure on CPU and memory resources.
 
 Pros:
 - no need to export data from database
@@ -86,7 +94,7 @@ Pros:
 - cost less(no service cost, no data transfer cost)
 - no need to wait before analysis
 Cons:
-- the performance might not as good as using duckdb
+- the performance of a single execution may not be as good as that of DuckDB.
 
 ### AB Testing
 There are two topic we can discuss about AB testing:
@@ -96,7 +104,7 @@ There are two topic we can discuss about AB testing:
 We can use different strategies to assign the user to different test and it's based on the business goals.
 For example, 
 1. we can use the hash of the user id.
-2. we can use the round-robin method.
+2. we can use the round-robin method.(I use this method in the demo)
 3. we can assign the user by the time they login.
 4. we can use the random method.
 
@@ -120,21 +128,9 @@ There are trade-off between cookie and session:
     - Should persist the session data in the database.
     - scale up could be hard for a distributed server.
 IMO, the testing info is not sensitive and the info won't be large. We can use the cookie to implement this feature.
-    
-2. **how to create & store a test**
-If the page content user saw should be delivered by us. We should reduce the risk of single point failure.
-The architecture might be like this:
-
-![diagram](../public/abconvert_with_product.png)
-
-The benefit of this architecture is that if the event's database is down, the A/B testing service still can work. The incident will have a smaller effect.
-But we will not have the strong consistency between the product and the event's database. and we'll have to use a ETL tool to sync the product's info into the event's database. It might cause some latency and extra cost.
-
-If we like to reduce the latency of getting page content or reduce the workload of the product's database. We could add a cache layer(like Redis) to cache the page content, we could use a cache aside pattern to achieve this.
-
 
 ---
-## Others
+## DuckDB and AI Integration
 There are another future benefit of using duckdb.
 There is a OSS project called "WrenAI" which is a text-to-sql tool. It can convert the natural language to the sql query and do analysis.
 But it only support RDBMS(PostgreSQL, MySQL, etc.) and duckdb for now.
@@ -143,3 +139,23 @@ Maybe it will be a good idea to let WrenAI to analyze the data in duckdb in the 
 There are some point we can consider 
 - Is LLM good enough to generate analytic sql?
 - Is WrenAI OSS version production ready?
+
+## Why I didn't choose ClickHouse
+
+The main reason is that I have not used Kafka and ClickHouse in a production environment. My current design is based on my past experience. However, I have evaluated ClickHouse and can share some of my thoughts.
+
+ClickHouse is a solid OLAP database known for its performance. It supports data ingestion from Kafka. The combination of ClickHouse and Kafka is a good solution.
+
+However, based on my research, ClickHouse's strong analytical performance relies heavily on specific SQL syntax. Its SQL optimization capabilities are not particularly robust. This means that the person writing the Analytic SQL needs to have in-depth knowledge of ClickHouse’s SQL syntax or conduct thorough testing to achieve optimal performance. This can become critical when resources are limited.
+
+When considering the cost-effectiveness of BigQuery, ClickHouse, and Snowflake, BigQuery offers better performance, scalability, and maintainability compared to the other two. Additionally, Kafka data can be ingested into BigQuery through Dataflow.
+
+To evaluate which solution to adopt, I would consider the following factors:
+
+- Cost
+- Performance capabilities
+- Scalability
+- Maintainability
+- Vendor Support
+- Vendor’s roadmap (e.g., support for AI-related features)
+- SOC 2 certification / ISO 27001 certification
