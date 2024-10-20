@@ -50,7 +50,6 @@ async function sendRandomEvent(eventCount, setMessage) {
   const end = Date.now();
   const message = `Time taken: ${end - start} ms, ${(eventCount / (end - start)) * 1000} events/s \n
   ${tests.map((test, index) => `${test.name}: ${recordEvents[index]}`).join('\n')}`;
-  console.log(message);
   setMessage(message);
 }
 
@@ -139,7 +138,6 @@ export default function EventPage() {
       });
 
       const data = await response.json();
-      console.log('API response:', data);
       setResults(data);
     } catch (error) {
       console.error('Error fetching API:', error);

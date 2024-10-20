@@ -35,16 +35,12 @@ export default async function handler(
 ) {
   const headerKey = "ab-test";
   let productHeader = req.cookies[headerKey];
-  // leave the console.log for demo purpose
-  console.log(`${headerKey}: ${productHeader}`);
 
   // if no product header or not in the product list, assign a new product
   const tests = await bootstrap.testRepository.getAll();
   const testIds = tests.map((test) => test.id.toString());
   if (!productHeader || !testIds.includes(productHeader)) {
     productHeader = testIds[getAssignedKey(testIds.length)];
-
-    console.log(`assign new test: ${productHeader}`);
 
     // set the new cookie, and let it expire in 14 days
     res.setHeader(

@@ -3,7 +3,6 @@ import bootstrap from "@/bootstrap";
 
 const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   const { price } = req.body;
-  console.log(`create a test with price: ${price}`);
   try {
     await bootstrap.testRepository.insertOne({ price });
   } catch (error) {
@@ -16,7 +15,6 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
   const tests = await bootstrap.testRepository.getAll();
-  console.log("current tests:", tests);
   res.status(200).json(tests);
 };
 

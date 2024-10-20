@@ -23,7 +23,7 @@ export default function ProductPage() {
 
   const handlePurchaseEvent = async (plan: { size: string; price: number }, purchaseType: string) => {
     try {
-      const response = await fetch("/api/event", {
+      await fetch("/api/event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -33,11 +33,6 @@ export default function ProductPage() {
         credentials: "include",
       });
 
-      if (response.ok) {
-        console.log("Event sent successfully.");
-      } else {
-        console.error("Failed to send event.");
-      }
     } catch (error) {
       console.error("Error sending event:", error);
     }

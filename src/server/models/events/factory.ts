@@ -7,7 +7,6 @@ import {
 
 export class EventFactory {
   static createEvent(event: EventInput): IEvent {
-    console.log("event:", event);
     switch (event.type) {
       case EventType.PURCHASE:
         return new EventPrice(event);
