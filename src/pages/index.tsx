@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export default function ABTest() {
   const [products, setProducts] = useState([
@@ -6,6 +7,7 @@ export default function ABTest() {
   ]);
   const [message, setMessage] = useState(''); // State to show success/failure message
   const [tests, setTests] = useState([]); // State to store existing tests
+  const router = useRouter();
 
   const handlePriceChange = (index: number, value: string) => {
     const updatedProducts = [...products];
@@ -59,102 +61,149 @@ export default function ABTest() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: 'white', padding: '20px', height: '100vh' }}>
-      <h1 style={{ color: 'black' }}>Create new Price test here</h1>
-      <form onSubmit={handleSubmit}>
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            color: 'black',
-          }}
-        >
-          <thead>
-            <tr>
-              <th style={{ ...tableHeaderStyle, textAlign: 'left' }}>Product</th>
-              <th style={{ ...tableHeaderStyle, textAlign: 'left' }}>Origin Price</th>
-              <th style={{ ...tableHeaderStyle, textAlign: 'left' }}>Test Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product, index) => (
-              <tr key={index}>
-                <td style={tableCellStyle}>{product.name}</td>
-                <td style={tableCellStyle}>${product.originPrice.toFixed(2)}</td>
-                <td style={tableCellStyle}>
-                  <input
-                    type="number"
-                    value={product.testPrice}
-                    onChange={(e) => handlePriceChange(index, e.target.value)}
-                    placeholder="Enter Test Price"
-                    style={{
-                      width: '100%',
-                      padding: '8px',
-                      color: 'black',
-                      border: '1px solid black',
-                    }}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <button
-          type="submit"
-          style={{
-            marginTop: '20px',
-            padding: '10px 20px',
-            backgroundColor: '#90ee90', // Light green
-            border: 'none',
-            color: 'black',
-            cursor: 'pointer',
-            borderRadius: '5px',
-            fontWeight: 'bold',
-          }}
-        >
-          Submit Test Prices
+    <div style={styles.pageContainer}>
+      {/* Sidebar Navigation */}
+      <div style={styles.sidebar}>
+        <button style={styles.navButton} onClick={() => router.push("/")}>
+          Test Page
         </button>
-      </form>
+        <button style={styles.navButton} onClick={() => router.push("/product")}>
+          Product Page
+        </button>
+        <button style={styles.navButton} onClick={() => router.push("/analysis")}>
+          Analysis Page
+        </button>
+      </div>
 
-      {message && (
-        <p style={{ marginTop: '20px', color: message === 'Test created' ? 'green' : 'red' }}>
-          {message}
-        </p>
-      )}
-      <hr style={{
-        border: 'none',
-        height: '2px',
-        backgroundColor: '#333',
-        margin: '30px 0'
-      }} />
+      {/* Main Content */}
+      <div style={styles.mainContent}>
+        <div style={{ backgroundColor: 'white', padding: '20px', height: '100%' }}>
+          <h1 style={{ color: 'black' }}>Create new Price test here</h1>
+          <form onSubmit={handleSubmit}>
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                color: 'black',
+              }}
+            >
+              <thead>
+                <tr>
+                  <th style={{ ...tableHeaderStyle, textAlign: 'left' }}>Product</th>
+                  <th style={{ ...tableHeaderStyle, textAlign: 'left' }}>Origin Price</th>
+                  <th style={{ ...tableHeaderStyle, textAlign: 'left' }}>Test Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product, index) => (
+                  <tr key={index}>
+                    <td style={tableCellStyle}>{product.name}</td>
+                    <td style={tableCellStyle}>${product.originPrice.toFixed(2)}</td>
+                    <td style={tableCellStyle}>
+                      <input
+                        type="number"
+                        value={product.testPrice}
+                        onChange={(e) => handlePriceChange(index, e.target.value)}
+                        placeholder="Enter Test Price"
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          color: 'black',
+                          border: '1px solid black',
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button
+              type="submit"
+              style={{
+                marginTop: '20px',
+                padding: '10px 20px',
+                backgroundColor: '#90ee90', // Light green
+                border: 'none',
+                color: 'black',
+                cursor: 'pointer',
+                borderRadius: '5px',
+                fontWeight: 'bold',
+              }}
+            >
+              Submit Test Prices
+            </button>
+          </form>
 
-      {/* Existing Tests Section */}
-      <h1 style={{ color: 'black', marginTop: '40px' }}>Existing Tests</h1>
-      <table
-        style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          color: 'black',
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={{...tableHeaderStyle, textAlign: 'left' as const}}>Test ID</th>
-            <th style={{...tableHeaderStyle, textAlign: 'left' as const}}>Test Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tests.map((test: { id: string; price: number }) => (
-            <tr key={test.id}>
-              <td style={tableCellStyle}>{test.id}</td>
-              <td style={tableCellStyle}>${test.price}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          {message && (
+            <p style={{ marginTop: '20px', color: message === 'Test created' ? 'green' : 'red' }}>
+              {message}
+            </p>
+          )}
+          <hr style={{
+            border: 'none',
+            height: '2px',
+            backgroundColor: '#333',
+            margin: '30px 0'
+          }} />
+
+          {/* Existing Tests Section */}
+          <h1 style={{ color: 'black', marginTop: '40px' }}>Existing Tests</h1>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              color: 'black',
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={{...tableHeaderStyle, textAlign: 'left' as const}}>Test ID</th>
+                <th style={{...tableHeaderStyle, textAlign: 'left' as const}}>Test Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tests.map((test: { id: string; price: number }) => (
+                <tr key={test.id}>
+                  <td style={tableCellStyle}>{test.id}</td>
+                  <td style={tableCellStyle}>${test.price}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
+
+const styles: { [key: string]: React.CSSProperties }  = {
+  pageContainer: {
+    display: "flex",
+    height: "100vh",
+  },
+  sidebar: {
+    width: "200px",
+    backgroundColor: "#333",
+    color: "#FFF",
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  navButton: {
+    backgroundColor: "#555",
+    border: "none",
+    padding: "10px",
+    cursor: "pointer",
+    color: "#FFF",
+    borderRadius: "5px",
+    textAlign: "left",
+  },
+  mainContent: {
+    flex: 1,
+    overflow: "auto",
+  },
+};
 
 const tableHeaderStyle = {
   border: '1px solid black',

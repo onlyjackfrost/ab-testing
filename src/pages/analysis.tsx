@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 type PurchaseStyle = {
-  subscribeCount: number;
-  oneTimePurchaseCount: number;
+  "subscribe-and-save": number;
+  "one-time-purchase": number;
 };
 
 type TestData = {
-  testId: number;
+  testId: string;
+  unitPrice: number;
   purchaseCount: number;
-  meanPrice: number;
-  revenue: number;
+  meanPrice: string;
+  revenue: string;
   purchaseStyle: PurchaseStyle;
 };
 
@@ -75,6 +77,32 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: "18px",
     marginTop: "20px",
   },
+  pageContainer: {
+    display: "flex",
+    height: "100vh",
+  },
+  sidebar: {
+    width: "200px",
+    backgroundColor: "#333",
+    color: "#FFF",
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  navButton: {
+    backgroundColor: "#555",
+    border: "none",
+    padding: "10px",
+    cursor: "pointer",
+    color: "#FFF",
+    borderRadius: "5px",
+    textAlign: "left",
+  },
+  mainContent: {
+    flex: 1,
+    overflow: "auto",
+  },
 };
 
 export default function AnalysisPage() {
@@ -82,6 +110,7 @@ export default function AnalysisPage() {
   const [tests, setTests] = useState<TestData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const fetchAnalysis = async () => {
     try {
@@ -95,7 +124,6 @@ export default function AnalysisPage() {
 
       if (response.ok) {
         const data: AnalysisResponse = await response.json();
-        console.log("data:", data);
         setOverview(data.overview);
         setTests(data.tests);
       } else {
@@ -120,44 +148,64 @@ export default function AnalysisPage() {
   if (error) return <p style={styles.error}>{error}</p>;
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Analysis Results</h1>
+    <div style={styles.pageContainer}>
+      {/* Sidebar Navigation */}
+      <div style={styles.sidebar}>
+        <button style={styles.navButton} onClick={() => router.push("/")}>
+          Test Page
+        </button>
+        <button style={styles.navButton} onClick={() => router.push("/product")}>
+          Product Page
+        </button>
+        <button style={styles.navButton} onClick={() => router.push("/analysis")}>
+          Analysis Page
+        </button>
+      </div>
 
-      {overview && (
-        <div style={styles.overview}>
-          <p style={styles.overviewItem}>
-            <strong>Total Purchase Count:</strong> {overview.totalPurchaseCount || "N/A"}
-          </p>
-          <p style={styles.overviewItem}>
-            <strong>Total Revenue:</strong> ${overview.totalRevenue.toFixed(2)}
-          </p>
+      {/* Main Content */}
+      <div style={styles.mainContent}>
+        <div style={styles.container}>
+          <h1 style={styles.heading}>Analysis Results</h1>
+
+          {overview && (
+            <div style={styles.overview}>
+              <p style={styles.overviewItem}>
+                <strong>Total Purchase Count:</strong> {overview.totalPurchaseCount || "N/A"}
+              </p>
+              <p style={styles.overviewItem}>
+                <strong>Total Revenue:</strong> ${overview.totalRevenue}
+              </p>
+            </div>
+          )}
+
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.tableHeader}>Test ID</th>
+                <th style={styles.tableHeader}>Unit Price</th>
+                <th style={styles.tableHeader}>Purchase Count</th>
+                <th style={styles.tableHeader}>Mean Price</th>
+                <th style={styles.tableHeader}>Revenue</th>
+                <th style={styles.tableHeader}>Subscribe Count</th>
+                <th style={styles.tableHeader}>One-Time Purchase Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tests.map((test) => (
+                <tr key={test.testId}>
+                  <td style={styles.tableCell}>{test.testId}</td>
+                  <td style={styles.tableCell}>${test.unitPrice}</td>
+                  <td style={styles.tableCell}>{test.purchaseCount}</td>
+                  <td style={styles.tableCell}>${test.meanPrice}</td>
+                  <td style={styles.tableCell}>${test.revenue}</td>
+                  <td style={styles.tableCell}>{test.purchaseStyle["subscribe-and-save"] || 0}</td>
+                  <td style={styles.tableCell}>{test.purchaseStyle["one-time-purchase"] || 0}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
-
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.tableHeader}>Test ID</th>
-            <th style={styles.tableHeader}>Purchase Count</th>
-            <th style={styles.tableHeader}>Mean Price</th>
-            <th style={styles.tableHeader}>Revenue</th>
-            <th style={styles.tableHeader}>Subscribe Count</th>
-            <th style={styles.tableHeader}>One-Time Purchase Count</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tests.map((test) => (
-            <tr key={test.testId}>
-              <td style={styles.tableCell}>{test.testId}</td>
-              <td style={styles.tableCell}>{test.purchaseCount}</td>
-              <td style={styles.tableCell}>${test.meanPrice.toFixed(2)}</td>
-              <td style={styles.tableCell}>${test.revenue.toFixed(2)}</td>
-              <td style={styles.tableCell}>{test.purchaseStyle.subscribeCount}</td>
-              <td style={styles.tableCell}>{test.purchaseStyle.oneTimePurchaseCount}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      </div>
     </div>
   );
 }

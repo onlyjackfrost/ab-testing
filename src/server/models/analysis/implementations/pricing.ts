@@ -6,6 +6,7 @@ import {
 import { EventType } from "@/server/models/events";
 import { AnalysisType } from "../base";
 import { uniq } from "lodash";
+import { Test, TestRepository } from "@/server/repositories/test";
 
 export interface PricingAnalysisOptions {
   startDate?: string;
@@ -15,17 +16,27 @@ export interface PricingAnalysisOptions {
 export class PricingAnalysis {
   type = AnalysisType.PRICING;
   private eventRepository: EventRepository;
+  private testRepository: TestRepository;
+  private analysisData: { events: Event[]; tests: Test[] } | undefined;
 
-  constructor({ eventRepository }: { eventRepository: EventRepository }) {
+  constructor({
+    eventRepository,
+    testRepository,
+  }: {
+    eventRepository: EventRepository;
+    testRepository: TestRepository;
+  }) {
     this.eventRepository = eventRepository;
+    this.testRepository = testRepository;
   }
 
-  public async fetchData(): Promise<Event[]> {
+  public async fetchData(): Promise<void> {
     const filter: EventFilters = {
       type: EventType.PURCHASE,
     };
-    const result = await this.eventRepository.getAllBy(filter);
-    return result;
+    const events = await this.eventRepository.getAllBy(filter);
+    const tests = await this.testRepository.getAll();
+    this.analysisData = { events, tests };
   }
 
   /**
@@ -33,12 +44,16 @@ export class PricingAnalysis {
    *  res = {
    *    overview: {totalPurchaseCount: 5, totalRevenue: 500}
    *    tests: [
-   *      {testId: 1, purchaseCount: 2, meanPrice: 100, revenue: 200, purchaseStyle:{subscribeCount: 1, oneTimePurchaseCount: 1}}
-   *      {testId: 2, purchaseCount: 3, meanPrice: 100, revenue: 300, purchaseStyle:{subscribeCount: 2, oneTimePurchaseCount: 1}}
+   *      {testId: 1, unitPrice: 20, purchaseCount: 2, meanPrice: 100, revenue: 200, purchaseStyle:{subscribeCount: 1, oneTimePurchaseCount: 1}}
+   *      {testId: 2, unitPrice: 30, purchaseCount: 3, meanPrice: 100, revenue: 300, purchaseStyle:{subscribeCount: 2, oneTimePurchaseCount: 1}}
    *    ],
    *  }
    */
-  public async analyze(events: Event[]) {
+  public async analyze() {
+    if (!this.analysisData) {
+      throw new Error("No analysis data, should fetch data first");
+    }
+    const { events, tests } = this.analysisData;
     const testIds = uniq(events.map((e) => e.testId));
 
     // total
@@ -67,7 +82,8 @@ export class PricingAnalysis {
 
       return {
         testId,
-        purchaseCount: purchaseCount,
+        unitPrice: tests.find((t) => t.id.toString() === testId)?.price,
+        purchaseCount,
         meanPrice: (revenue / purchaseCount).toFixed(2),
         revenue: revenue.toFixed(2),
         purchaseStyle,

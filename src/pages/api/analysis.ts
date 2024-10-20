@@ -3,7 +3,7 @@ import bootstrap from "@/bootstrap";
 import { PricingAnalysis } from "@/server/models/analysis/implementations/pricing";
 import { AnalysisType } from "@/server/models/analysis/base";
 
-const { eventRepository } = bootstrap;
+const { eventRepository, testRepository } = bootstrap;
 
 interface AnalysisFilters {
   startDate?: string;
@@ -35,15 +35,15 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
   let analysis;
   switch (analysisType) {
     case AnalysisType.PRICING:
-      analysis = new PricingAnalysis({ eventRepository });
+      analysis = new PricingAnalysis({ eventRepository, testRepository });
       break;
     default:
       throw new Error(`Unsupported analysis type: ${analysisType}`);
   }
   // fetch data based on the analysis type
-  const events = await analysis.fetchData();
-  // generate the result
-  const result = await analysis.analyze(events);
+  await analysis.fetchData();
+  const result = await analysis.analyze();
+
   // return the result
   res.status(200).json(result);
 }
